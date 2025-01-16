@@ -1,0 +1,21 @@
+server:
+  port: 8080 
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ 
+  instance:
+    prefer-ip-address: true
+
+zuul:
+  routes:
+    commande-service:
+      path: /commande/**
+      serviceId: microservice-commande
+    commandes-v2-service:
+      path: /commandesV2/**
+      serviceId: microservice-commande-produit
+    produits-service:
+      path: /produits/**
+      serviceId: microservice-commande-produit
