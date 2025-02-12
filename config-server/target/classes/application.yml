@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          default-label: main
+          uri: https://github.com/AYOUBMOUF/MicroService-commandes-produits
+          search-paths: https://github.com/AYOUBMOUF/MicroService-commandes-produits/condig-server.yml
+server:
+  port: 8888

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Commandes SPA</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Add basic styling */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #content {
+            margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>Commandes</h1>
+
+<!-- Navigation buttons -->
+<button onclick="loadRecentCommandes()">Show Recent Commandes</button>
+<button onclick="loadAllCommandes()">Show All Commandes</button>
+<button onclick="showCreateForm()">Create Commande</button>
+
+<!-- Dynamic content will be loaded here -->
+<div id="content">
+    <!-- Default content to show recent commandes -->
+    <div id="recent-commandes" class="section">
+        <h2>Recent Commandes</h2>
+        <table id="recent-commandes-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Details</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Commande Form -->
+<div id="create-form" class="section" style="display:none;">
+    <h2>Create Commande</h2>
+    <form id="commande-form">
+        <label for="details">Details:</label>
+        <input type="text" id="details" name="details" required />
+        <button type="submit">Create</button>
+    </form>
+    <button onclick="cancelCreate()">Cancel</button>
+</div>
+
+<script>
+    // Load recent commandes using AJAX
+    function loadRecentCommandes() {
+        $.get('/commandes/recent', function(data) {
+            let tableContent = '';
+            data.forEach(function(commande) {
+                tableContent += `<tr>
+                        <td>${commande.id}</td>
+                        <td>${commande.details}</td>
+                    </tr>`;
+            });
+            $('#recent-commandes-table tbody').html(tableContent);
+        });
+    }
+
+    // Load all commandes using AJAX
+    function loadAllCommandes() {
+        $.get('/commandes/all', function(data) {
+            let tableContent = '';
+            data.forEach(function(commande) {
+                tableContent += `<tr>
+                        <td>${commande.id}</td>
+                        <td>${commande.details}</td>
+                    </tr>`;
+            });
+            $('#recent-commandes-table tbody').html(tableContent);
+        });
+    }
+
+    // Show the create commande form
+    function showCreateForm() {
+        $('#content').hide();
+        $('#create-form').show();
+    }
+
+    // Cancel creating a new commande
+    function cancelCreate() {
+        $('#create-form').hide();
+        $('#content').show();
+    }
+
+    // Submit the form to create a new commande
+    $('#commande-form').submit(function(event) {
+        event.preventDefault();
+        let details = $('#details').val();
+        $.ajax({
+            url: '/commandes/',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ details: details }),
+            success: function(response) {
+                alert('Commande Created');
+                cancelCreate(); // Hide the form
+                loadAllCommandes(); // Reload the all commandes table
+            }
+        });
+    });
+
+    // Initial call to load recent commandes when the page loads
+    $(document).ready(function() {
+        loadRecentCommandes();
+    });
+</script>
+</body>
+</html>

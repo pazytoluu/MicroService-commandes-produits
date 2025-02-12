@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .status {
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 20px;
+            border: 4px solid transparent;
+            border-radius: 10px;
+            transition: border-color 0.5s, background-color 0.5s;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<h1>Application Health Status</h1>
+<div class="status" id="health-status">Loading...</div>
+
+<script>
+    async function fetchHealthStatus() {
+        try {
+            const response = await fetch('http://localhost:8000/actuator/health');
+            const data = await response.json();
+            const statusDiv = document.getElementById('health-status');
+
+            // Update the status display
+            if (data.status === 'UP') {
+                statusDiv.textContent = '✅ Application is UP';
+                statusDiv.style.color = 'green';
+                statusDiv.style.borderColor = 'green';
+                statusDiv.style.backgroundColor = '#eaffea';
+            } else {
+                statusDiv.textContent = '❌ Application is DOWN';
+                statusDiv.style.color = 'red';
+                statusDiv.style.borderColor = 'red';
+                statusDiv.style.backgroundColor = '#ffeaea';
+            }
+        } catch (error) {
+            const statusDiv = document.getElementById('health-status');
+            statusDiv.textContent = 'Error fetching health status!';
+            statusDiv.style.color = 'gray';
+            statusDiv.style.borderColor = 'gray';
+            statusDiv.style.backgroundColor = '#f5f5f5';
+        }
+    }
+
+    // Fetch health status every 5 seconds
+    setInterval(fetchHealthStatus, 5000);
+    fetchHealthStatus(); // Initial load
+</script>
+</body>
+</html>
